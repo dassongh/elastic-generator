@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { GetUserViewDto } from './dto/get-user-view.dto';
 import { User } from './user.entity';
-import { GetUserView } from './user.interfaces';
 
 @Injectable()
 export class UserView {
-  public getUser(user: User): GetUserView {
+  public getUser(user: User): GetUserViewDto {
     return {
       id: user.id,
       name: user.name,
