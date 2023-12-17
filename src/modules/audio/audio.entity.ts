@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity()
-export class AudioLink {
+export abstract class AudioLink {
   @PrimaryGeneratedColumn()
   id: number;
 

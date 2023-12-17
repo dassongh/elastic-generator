@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 import { AudioLink } from '../audio/audio.entity';
 
 @Entity()
-export class User {
+export abstract class User {
   @PrimaryGeneratedColumn()
   id: number;
 
