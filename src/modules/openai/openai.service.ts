@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-
 import OpenAI from 'openai';
 
 import { Injectable } from '@nestjs/common';
@@ -15,7 +13,7 @@ export class OpenAIService {
     });
   }
 
-  public async generateAudioFromText(pathToFile: string, text: string): Promise<void> {
+  public async generateAudioFromText(text: string): Promise<Buffer> {
     const mp3file = await this.openai.audio.speech.create({
       model: 'tts-1',
       voice: 'alloy',
@@ -23,6 +21,6 @@ export class OpenAIService {
     });
 
     const buffer = Buffer.from(await mp3file.arrayBuffer());
-    return fs.promises.writeFile(pathToFile, buffer);
+    return buffer;
   }
 }
