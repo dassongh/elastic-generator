@@ -12,7 +12,7 @@ import { TokenType } from './auth.constants';
 import { TokenData, TokenPayload } from './auth.interfaces';
 import { SignInDto, SignUpDto } from './dto';
 
-import { GetUserViewDto } from '../user/dto/get-user-view.dto';
+import { GetUserViewDto } from '../user/dto';
 import { User } from '../user/user.entity';
 import { UserView } from '../user/user.view';
 

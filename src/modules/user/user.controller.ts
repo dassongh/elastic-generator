@@ -1,11 +1,12 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 
+import { SaveUserKeyDto } from './dto';
 import { User } from './user.entity';
+import { UserService } from './user.service';
 
 import { Response } from '../../common/interfaces';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
-import { UserService } from './user.service';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -21,5 +22,12 @@ export class UserController {
   public async getById(@Param('id') id: number): Promise<Response> {
     const user = await this.userService.getById(id);
     return { data: user };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('openai')
+  public async saveOpenAiKey(@GetUser('id') userId: number, @Body() { key }: SaveUserKeyDto): Promise<Response> {
+    await this.userService.saveOpenAiKey(userId, key);
+    return { message: 'ok' };
   }
 }

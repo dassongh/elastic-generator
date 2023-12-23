@@ -18,6 +18,9 @@ export abstract class User {
   @OneToMany(() => AudioLink, audio => audio.user)
   audioLinks: AudioLink[];
 
+  @Column({ nullable: true })
+  openAiKey: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
