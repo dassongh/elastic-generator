@@ -1,25 +1,20 @@
 import OpenAI from 'openai';
 
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OpenAIService {
-  private openai: OpenAI;
+  public async generateAudioFromText(apiKey: string, text: string): Promise<Buffer> {
+    const openAi = new OpenAI({ apiKey });
 
-  constructor(config: ConfigService) {
-    this.openai = new OpenAI({
-      apiKey: config.get<string>('OPENAI_KEY'),
-    });
-  }
-
-  public async generateAudioFromText(text: string): Promise<Buffer> {
-    const mp3file = await this.openai.audio.speech.create({
+    console.log({ text });
+    const mp3file = await openAi.audio.speech.create({
       model: 'tts-1',
       voice: 'alloy',
       input: text,
+      response_format: 'mp3',
     });
-
+    console.log({ mp3file });
     const buffer = Buffer.from(await mp3file.arrayBuffer());
     return buffer;
   }
