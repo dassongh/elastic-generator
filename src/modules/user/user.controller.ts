@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 
 import { SaveUserKeyDto } from './dto';
 import { User } from './user.entity';
@@ -28,6 +28,12 @@ export class UserController {
   @Post('openai')
   public async saveOpenAiKey(@GetUser('id') userId: number, @Body() { key }: SaveUserKeyDto): Promise<Response> {
     await this.userService.saveOpenAiKey(userId, key);
+    return { message: 'ok' };
+  }
+
+  @Delete('openai')
+  public async removeOpenAiKey(@GetUser('id') userId: number): Promise<Response> {
+    await this.userService.removeOpenAiKey(userId);
     return { message: 'ok' };
   }
 }

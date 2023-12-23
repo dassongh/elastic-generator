@@ -22,4 +22,8 @@ export class UserService {
   public async saveOpenAiKey(id: number, key: string): Promise<UpdateResult> {
     return this.userRepository.update({ id }, { openAiKey: key });
   }
+
+  public async removeOpenAiKey(id: number): Promise<UpdateResult> {
+    return this.userRepository.update({ id }, { openAiKey: null });
+  }
 }
