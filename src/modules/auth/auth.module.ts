@@ -7,11 +7,11 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategy';
 
 import { User } from '../user/user.entity';
-import { UserView } from '../user/user.view';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [JwtModule.register({}), TypeOrmModule.forFeature([User])],
+  imports: [JwtModule.register({}), TypeOrmModule.forFeature([User]), UserModule],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, UserView],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
