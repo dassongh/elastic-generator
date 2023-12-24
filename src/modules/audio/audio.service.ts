@@ -21,12 +21,13 @@ export class AudioService {
   ) {}
 
   public async generateAudioFromText(userId: number, text: string): Promise<string> {
-    const user = await this.userRepository.findOne({ where: { id: userId }, select: { id: true, openAiKey: true } });
+    const user = await this.userRepository.findOne({ where: { id: userId }, select: ['id', 'openAiKey'] });
     if (!user.openAiKey) {
       throw new NotFoundException('OpenAI key not found');
     }
 
     const buffer = await this.openAIService.generateAudioFromText(user.openAiKey, text);
+
     const fileName = `${Date.now()}.mp3`;
     await this.fileStorageService.saveAudioFile(buffer, fileName);
 
