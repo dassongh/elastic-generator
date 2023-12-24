@@ -5,7 +5,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
 import { AppModule } from '../src/app.module';
-import { DatabaseExceptionFilter } from '../src/common/database-exception.filter';
+import { DatabaseExceptionFilter } from '../src/common/filter/database-exception.filter';
 import { SignUpDto } from '../src/modules/auth/dto';
 
 describe('App e2e', () => {
