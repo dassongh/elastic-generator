@@ -14,8 +14,8 @@ export class AudioController {
   constructor(private audioService: AudioService) {}
 
   @Post('generate')
-  public async generateAudio(@GetUser('id') userId: number, @Body() { text }: GenerateAudioDto): Promise<Response> {
-    const link = await this.audioService.generateAudioFromText(userId, text);
+  public async generateAudio(@GetUser('id') userId: number, @Body() dto: GenerateAudioDto): Promise<Response> {
+    const link = await this.audioService.generateAudioFromText(userId, dto);
     return { data: { link } };
   }
 

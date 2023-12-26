@@ -12,6 +12,9 @@ export abstract class AudioLink {
   @Column()
   link: string;
 
+  @Column()
+  title: string;
+
   @ManyToOne(() => User, user => user.audioLinks, { onDelete: 'CASCADE' })
   user: User;
 }
