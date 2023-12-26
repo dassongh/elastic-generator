@@ -8,3 +8,8 @@ export interface Response {
     count: number;
   };
 }
+
+export interface Pagination {
+  limit: number;
+  offset: number;
+}

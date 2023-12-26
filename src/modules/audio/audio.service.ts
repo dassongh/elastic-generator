@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileStorageService } from '../file-storage/file-storage.service';
 import { OpenAIService } from '../openai/openai.service';
 
+import { Pagination } from '../../common/interfaces';
 import { User } from '../user/user.entity';
 import { AudioLink } from './audio.entity';
 
@@ -35,5 +36,16 @@ export class AudioService {
     await this.audioLinkRepository.save({ userId, link: fileLink });
 
     return fileLink;
+  }
+
+  public async getAudioLinks(userId: number, { limit, offset }: Pagination): Promise<[AudioLink[], number]> {
+    const { 0: audioLinks, 1: count } = await this.audioLinkRepository.findAndCount({
+      where: { userId },
+      select: ['id', 'link'],
+      skip: offset,
+      take: limit,
+    });
+
+    return [audioLinks, count];
   }
 }

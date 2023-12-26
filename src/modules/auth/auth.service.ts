@@ -60,7 +60,7 @@ export class AuthService {
 
   private signTokens(tokenPayload: TokenPayload, tokenType: TokenType): Promise<string> {
     const options = {
-      [TokenType.ACCESS]: { secret: this.config.get('ACCESS_TOKEN_SECRET'), expiresIn: '2h' },
+      [TokenType.ACCESS]: { secret: this.config.get('ACCESS_TOKEN_SECRET'), expiresIn: '24h' },
       [TokenType.REFRESH]: { secret: this.config.get('REFRESH_TOKEN_SECRET'), expiresIn: '30d' },
     };
 
