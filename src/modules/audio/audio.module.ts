@@ -7,10 +7,10 @@ import { AudioService } from './audio.service';
 import { FileStorageModule } from '../file-storage/file-storage.module';
 import { OpenAIModule } from '../openai/openai.module';
 import { User } from '../user/user.entity';
-import { AudioLink } from './audio.entity';
+import { Audio } from './audio.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AudioLink, User]), FileStorageModule, OpenAIModule],
+  imports: [TypeOrmModule.forFeature([Audio, User]), FileStorageModule, OpenAIModule],
   controllers: [AudioController],
   providers: [AudioService],
 })

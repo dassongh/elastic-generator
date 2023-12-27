@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ROOT_AUDIO_DIR } from './audio.constants';
-import { AudioLink } from './audio.entity';
+import { Audio } from './audio.entity';
 import { GenerateAudioDto, GetAudioDto, UpdateAudioDto } from './dto';
 
 import { Pagination } from '../../common/interfaces';
@@ -16,14 +16,14 @@ import { User } from '../user/user.entity';
 @Injectable()
 export class AudioService {
   constructor(
-    @InjectRepository(AudioLink) private audioLinkRepository: Repository<AudioLink>,
+    @InjectRepository(Audio) private audioRepository: Repository<Audio>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private fileStorageService: FileStorageService,
     private openAIService: OpenAIService,
     private config: ConfigService
   ) {}
 
-  public async generateAudioFromText(userId: number, dto: GenerateAudioDto): Promise<AudioLink> {
+  public async generateAudioFromText(userId: number, dto: GenerateAudioDto): Promise<Audio> {
     const user = await this.userRepository.findOne({ where: { id: userId }, select: ['id', 'openAiKey'] });
     if (!user.openAiKey) {
       throw new NotFoundException('OpenAI key not found');
@@ -42,28 +42,28 @@ export class AudioService {
       voice: dto.voice,
       transcription: dto.text,
     };
-    const audioEntity = await this.audioLinkRepository.save(entityPayload);
+    const audioEntity = await this.audioRepository.save(entityPayload);
 
     return audioEntity;
   }
 
   public async get(userId: number, { limit, offset }: Pagination): Promise<[GetAudioDto[], number]> {
-    const { 0: audioLinks, 1: count } = await this.audioLinkRepository.findAndCount({
+    const { 0: audios, 1: count } = await this.audioRepository.findAndCount({
       where: { userId },
       select: ['id', 'title'],
       skip: offset,
       take: limit,
     });
 
-    return [audioLinks, count];
+    return [audios, count];
   }
 
-  public async getById(userId: number, audioId: number): Promise<AudioLink> {
-    return this.audioLinkRepository.findOneOrFail({ where: { userId, id: audioId } });
+  public async getById(userId: number, audioId: number): Promise<Audio> {
+    return this.audioRepository.findOneOrFail({ where: { userId, id: audioId } });
   }
 
   public async getFile(userId: number, audioId: number): Promise<Buffer> {
-    const { fileName } = await this.audioLinkRepository.findOneOrFail({
+    const { fileName } = await this.audioRepository.findOneOrFail({
       where: { userId, id: audioId },
       select: ['fileName'],
     });
@@ -71,17 +71,17 @@ export class AudioService {
     return this.fileStorageService.get(ROOT_AUDIO_DIR, fileName);
   }
 
-  public async update(userId: number, audioId: number, dto: UpdateAudioDto): Promise<AudioLink> {
-    const audioLink = await this.audioLinkRepository.findOneByOrFail({ userId, id: audioId });
-    const payload = { ...audioLink, ...dto };
-    return this.audioLinkRepository.save(payload);
+  public async update(userId: number, audioId: number, dto: UpdateAudioDto): Promise<Audio> {
+    const audio = await this.audioRepository.findOneByOrFail({ userId, id: audioId });
+    const payload = { ...audio, ...dto };
+    return this.audioRepository.save(payload);
   }
 
   public async delete(userId: number, audioId: number): Promise<DeleteResult | void> {
-    const audioLink = await this.audioLinkRepository.findOneBy({ userId, id: audioId });
-    if (!audioLink) return;
+    const audio = await this.audioRepository.findOneBy({ userId, id: audioId });
+    if (!audio) return;
 
-    await this.fileStorageService.delete(ROOT_AUDIO_DIR, audioLink.fileName);
-    return this.audioLinkRepository.delete(audioId);
+    await this.fileStorageService.delete(ROOT_AUDIO_DIR, audio.fileName);
+    return this.audioRepository.delete(audioId);
   }
 }

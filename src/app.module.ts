@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { AudioLink } from './modules/audio/audio.entity';
+import { Audio } from './modules/audio/audio.entity';
 import { Image } from './modules/image/image.entity';
 import { User } from './modules/user/user.entity';
 
@@ -26,7 +26,7 @@ import { UserModule } from './modules/user/user.module';
         username: config.get<string>('POSTGRES_USER'),
         password: config.get<string>('POSTGRES_PASSWORD'),
         database: config.get<string>('POSTGRES_DB'),
-        entities: [User, AudioLink, Image],
+        entities: [User, Audio, Image],
         synchronize: true,
       }),
     }),

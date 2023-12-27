@@ -3,7 +3,7 @@ import { Voice } from '../openai/openai.constants';
 import { User } from '../user/user.entity';
 
 @Entity()
-export abstract class AudioLink {
+export abstract class Audio {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,6 +22,6 @@ export abstract class AudioLink {
   @Column()
   transcription: string;
 
-  @ManyToOne(() => User, user => user.audioLinks, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user.audios, { onDelete: 'CASCADE' })
   user: User;
 }
