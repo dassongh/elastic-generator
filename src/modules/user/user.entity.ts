@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { AudioLink } from '../audio/audio.entity';
+import { Image } from '../image/image.entity';
 
 @Entity()
 export abstract class User {
@@ -17,6 +18,9 @@ export abstract class User {
 
   @OneToMany(() => AudioLink, audio => audio.user)
   audioLinks: AudioLink[];
+
+  @OneToMany(() => Image, image => image.user)
+  images: Image[];
 
   @Column({ nullable: true })
   openAiKey: string;
