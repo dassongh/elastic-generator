@@ -1,17 +1,16 @@
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { AudioLink } from './audio.entity';
+import { GenerateAudioDto, GetAudioDto, UpdateAudioDto } from './dto';
+
+import { Pagination } from '../../common/interfaces';
 import { FileStorageService } from '../file-storage/file-storage.service';
 import { OpenAIService } from '../openai/openai.service';
-
-import { DeleteResult } from 'typeorm/browser';
-import { Pagination } from '../../common/interfaces';
 import { User } from '../user/user.entity';
-import { AudioLink } from './audio.entity';
-import { GenerateAudioDto, UpdateAudioDto } from './dto';
 
 @Injectable()
 export class AudioService {
@@ -47,14 +46,19 @@ export class AudioService {
     return audioEntity;
   }
 
-  public async get(userId: number, { limit, offset }: Pagination): Promise<[AudioLink[], number]> {
+  public async get(userId: number, { limit, offset }: Pagination): Promise<[GetAudioDto[], number]> {
     const { 0: audioLinks, 1: count } = await this.audioLinkRepository.findAndCount({
       where: { userId },
+      select: ['id', 'link', 'title'],
       skip: offset,
       take: limit,
     });
 
     return [audioLinks, count];
+  }
+
+  public async getById(userId: number, audioId: number): Promise<AudioLink> {
+    return this.audioLinkRepository.findOneOrFail({ where: { userId, id: audioId } });
   }
 
   public async getFile(userId: number, audioId: number): Promise<Buffer> {
