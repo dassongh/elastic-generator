@@ -27,8 +27,8 @@ export class AudioController {
 
   @Post('generate')
   public async generateAudio(@GetUser('id') userId: number, @Body() dto: GenerateAudioDto): Promise<Response> {
-    const link = await this.audioService.generateAudioFromText(userId, dto);
-    return { data: { link } };
+    const data = await this.audioService.generateAudioFromText(userId, dto);
+    return { data };
   }
 
   @Get()
@@ -37,18 +37,18 @@ export class AudioController {
     limit = Number(limit) || 10;
     const offset = limit * (page - 1);
 
-    const { 0: links, 1: count } = await this.audioService.get(userId, { limit, offset });
+    const { 0: data, 1: count } = await this.audioService.get(userId, { limit, offset });
 
     return {
       pagination: { page, limit, count },
-      data: links,
+      data,
     };
   }
 
   @Get('/:id')
   public async getById(@GetUser('id') userId: number, @Param() { id }: BaseParamDto): Promise<Response> {
-    const link = await this.audioService.getById(userId, id);
-    return { data: link };
+    const data = await this.audioService.getById(userId, id);
+    return { data };
   }
 
   @Get('/:id/play')
