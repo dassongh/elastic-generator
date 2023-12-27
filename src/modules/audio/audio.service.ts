@@ -50,7 +50,7 @@ export class AudioService {
   public async get(userId: number, { limit, offset }: Pagination): Promise<[GetAudioDto[], number]> {
     const { 0: audioLinks, 1: count } = await this.audioLinkRepository.findAndCount({
       where: { userId },
-      select: ['id', 'link', 'title'],
+      select: ['id', 'title'],
       skip: offset,
       take: limit,
     });
@@ -63,8 +63,10 @@ export class AudioService {
   }
 
   public async getFile(userId: number, audioId: number): Promise<Buffer> {
-    const { link } = await this.audioLinkRepository.findOneOrFail({ where: { userId, id: audioId }, select: ['link'] });
-    const fileName = this.getFileName(link);
+    const { fileName } = await this.audioLinkRepository.findOneOrFail({
+      where: { userId, id: audioId },
+      select: ['fileName'],
+    });
 
     return this.fileStorageService.get(ROOT_AUDIO_DIR, fileName);
   }
@@ -79,12 +81,7 @@ export class AudioService {
     const audioLink = await this.audioLinkRepository.findOneBy({ userId, id: audioId });
     if (!audioLink) return;
 
-    const fileName = this.getFileName(audioLink.link);
-    await this.fileStorageService.delete(ROOT_AUDIO_DIR, fileName);
+    await this.fileStorageService.delete(ROOT_AUDIO_DIR, audioLink.fileName);
     return this.audioLinkRepository.delete(audioId);
-  }
-
-  private getFileName(link: string): string {
-    return link.split('/').pop();
   }
 }

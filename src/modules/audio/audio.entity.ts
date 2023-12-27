@@ -11,7 +11,7 @@ export abstract class AudioLink {
   userId: number;
 
   @Column()
-  link: string;
+  fileName: string;
 
   @Column()
   title: string;
