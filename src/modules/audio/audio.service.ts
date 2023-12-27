@@ -1,7 +1,6 @@
 import { DeleteResult, Repository } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ROOT_AUDIO_DIR } from './audio.constants';
@@ -19,8 +18,7 @@ export class AudioService {
     @InjectRepository(Audio) private audioRepository: Repository<Audio>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private fileStorageService: FileStorageService,
-    private openAIService: OpenAIService,
-    private config: ConfigService
+    private openAIService: OpenAIService
   ) {}
 
   public async generateAudioFromText(userId: number, dto: GenerateAudioDto): Promise<Audio> {
@@ -37,7 +35,7 @@ export class AudioService {
 
     const entityPayload = {
       userId,
-      link: `${this.config.get('BASE_URL')}/audio/${fileName}`,
+      fileName,
       title: dto.title,
       voice: dto.voice,
       transcription: dto.text,
