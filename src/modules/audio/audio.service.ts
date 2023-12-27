@@ -29,13 +29,20 @@ export class AudioService {
       throw new NotFoundException('OpenAI key not found');
     }
 
-    const buffer = await this.openAIService.generateAudioFromText(user.openAiKey, dto.text);
+    const openAiServicePayload = { text: dto.text, voice: dto.voice };
+    const buffer = await this.openAIService.generateAudioFromText(user.openAiKey, openAiServicePayload);
 
     const fileName = `${Date.now()}.mp3`;
     await this.fileStorageService.save(buffer, fileName);
 
-    const fileLink = `${this.config.get('BASE_URL')}/audio/${fileName}`;
-    const audioEntity = await this.audioLinkRepository.save({ userId, link: fileLink, title: dto.title });
+    const entityPayload = {
+      userId,
+      link: `${this.config.get('BASE_URL')}/audio/${fileName}`,
+      title: dto.title,
+      voice: dto.voice,
+      transcription: dto.text,
+    };
+    const audioEntity = await this.audioLinkRepository.save(entityPayload);
 
     return audioEntity;
   }
@@ -43,7 +50,6 @@ export class AudioService {
   public async get(userId: number, { limit, offset }: Pagination): Promise<[AudioLink[], number]> {
     const { 0: audioLinks, 1: count } = await this.audioLinkRepository.findAndCount({
       where: { userId },
-      select: ['id', 'title', 'link'],
       skip: offset,
       take: limit,
     });
