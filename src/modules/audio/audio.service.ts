@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ROOT_AUDIO_DIR } from './audio.constants';
 import { AudioLink } from './audio.entity';
 import { GenerateAudioDto, GetAudioDto, UpdateAudioDto } from './dto';
 
@@ -32,7 +33,7 @@ export class AudioService {
     const buffer = await this.openAIService.generateAudioFromText(user.openAiKey, openAiServicePayload);
 
     const fileName = `${Date.now()}.mp3`;
-    await this.fileStorageService.save(buffer, fileName);
+    await this.fileStorageService.save(buffer, ROOT_AUDIO_DIR, fileName);
 
     const entityPayload = {
       userId,
@@ -65,7 +66,7 @@ export class AudioService {
     const { link } = await this.audioLinkRepository.findOneOrFail({ where: { userId, id: audioId }, select: ['link'] });
     const fileName = this.getFileName(link);
 
-    return this.fileStorageService.get(fileName);
+    return this.fileStorageService.get(ROOT_AUDIO_DIR, fileName);
   }
 
   public async update(userId: number, audioId: number, dto: UpdateAudioDto): Promise<AudioLink> {
@@ -79,7 +80,7 @@ export class AudioService {
     if (!audioLink) return;
 
     const fileName = this.getFileName(audioLink.link);
-    await this.fileStorageService.delete(fileName);
+    await this.fileStorageService.delete(ROOT_AUDIO_DIR, fileName);
     return this.audioLinkRepository.delete(audioId);
   }
 
