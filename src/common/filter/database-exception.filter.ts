@@ -4,9 +4,9 @@ import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
 
 @Catch(TypeORMError)
 export class DatabaseExceptionFilter implements ExceptionFilter {
-  private static DUPLICATE_UNIQUE_KEY_ERROR = 23505;
-  private static FOREIGN_KEY_CONSTRAINT_ERROR = 23503;
-  private static RELATION_KEY_NOT_EXIST = 23502;
+  private static NOT_NULL_VIOLATION = 23502;
+  private static FOREIGN_KEY_VIOLATION = 23503;
+  private static UNIQUE_VIOLATION = 23505;
 
   public catch(exception: QueryFailedError | EntityNotFoundError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -15,17 +15,17 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     if (exception instanceof EntityNotFoundError) {
       return response.status(404).json(this.getResponse('Entity not found', 'Not Found', 404));
     }
-
+    console.error(exception);
     const code = exception.driverError.code;
     const exceptionEntityOptions = {
-      [DatabaseExceptionFilter.DUPLICATE_UNIQUE_KEY_ERROR]: this.getResponse('Duplicate unique key', 'Conflict', 409),
-      [DatabaseExceptionFilter.FOREIGN_KEY_CONSTRAINT_ERROR]: this.getResponse(
-        'Foreign key constraint',
+      [DatabaseExceptionFilter.UNIQUE_VIOLATION]: this.getResponse('Duplicate unique key', 'Conflict', 409),
+      [DatabaseExceptionFilter.FOREIGN_KEY_VIOLATION]: this.getResponse(
+        'Foreign key not exist',
         'Unprocessable Entity',
         422
       ),
-      [DatabaseExceptionFilter.RELATION_KEY_NOT_EXIST]: this.getResponse(
-        'Relation key not exist',
+      [DatabaseExceptionFilter.NOT_NULL_VIOLATION]: this.getResponse(
+        'Column cannot be null',
         'Unprocessable Entity',
         422
       ),
