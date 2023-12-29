@@ -15,6 +15,9 @@ export abstract class Image {
   @Column()
   title: string;
 
+  @Column()
+  prompt: string;
+
   @ManyToOne(() => User, user => user.images, { onDelete: 'CASCADE' })
   user: User;
 }

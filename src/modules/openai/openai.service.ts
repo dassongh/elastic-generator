@@ -18,4 +18,15 @@ export class OpenAIService {
     const buffer = Buffer.from(await mp3file.arrayBuffer());
     return buffer;
   }
+
+  public async generateImage(apiKey: string, prompt: string): Promise<OpenAI.Images.ImagesResponse> {
+    const openAi = new OpenAI({ apiKey });
+
+    return openAi.images.generate({
+      prompt,
+      response_format: 'url',
+      size: '512x512',
+      model: 'dall-e-2',
+    });
+  }
 }
