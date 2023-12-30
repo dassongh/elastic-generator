@@ -2,8 +2,10 @@ import fs from 'node:fs/promises';
 
 import { Injectable } from '@nestjs/common';
 
+import { IFileStorageService } from './file-storage.service.interface';
+
 @Injectable()
-export class FileStorageService {
+export class FileStorageService implements IFileStorageService {
   public save(buffer: Buffer, rootDir: string, fileName: string) {
     return fs.writeFile(`${rootDir}/${fileName}`, buffer);
   }
