@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  Param,
+  Post,
+  Put,
+  Query,
+  StreamableFile,
+  UseGuards,
+} from '@nestjs/common';
 
 import { GenerateImageDto, UpdateImageDto } from './dto';
 import { ImageService } from './image.service';
@@ -37,6 +49,13 @@ export class ImageController {
   public async getById(@GetUser('id') userId: number, @Param() { id }: BaseParamDto): Promise<Response> {
     const data = await this.imageService.getById(userId, id);
     return { data };
+  }
+
+  @Get('/:id/serve')
+  @Header('Content-Type', 'image/png')
+  public async serve(@GetUser('id') userId: number, @Param() { id }: BaseParamDto): Promise<StreamableFile> {
+    const buffer = await this.imageService.getFile(userId, id);
+    return new StreamableFile(buffer);
   }
 
   @Put('/:id')

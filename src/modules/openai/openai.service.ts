@@ -15,18 +15,20 @@ export class OpenAIService {
       response_format: 'mp3',
     });
 
-    const buffer = Buffer.from(await mp3file.arrayBuffer());
-    return buffer;
+    const arrayBuffer = await mp3file.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   }
 
-  public async generateImage(apiKey: string, prompt: string): Promise<OpenAI.Images.ImagesResponse> {
+  public async generateImage(apiKey: string, prompt: string): Promise<Buffer> {
     const openAi = new OpenAI({ apiKey });
 
-    return openAi.images.generate({
+    const image = await openAi.images.generate({
       prompt,
-      response_format: 'url',
+      response_format: 'b64_json',
       size: '512x512',
       model: 'dall-e-2',
     });
+
+    return Buffer.from(image.data[0].b64_json, 'base64');
   }
 }

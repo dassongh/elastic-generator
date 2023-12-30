@@ -10,7 +10,7 @@ export abstract class Image {
   userId: number;
 
   @Column()
-  link: string;
+  fileName: string;
 
   @Column()
   title: string;
