@@ -1,14 +1,15 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
-import { GenerateImageDto } from './dto';
+import { GenerateImageDto, UpdateImageDto } from './dto';
 import { ImageService } from './image.service';
 
+import { BaseParamDto, BaseQueryDto } from '../../common/dto';
 import { Response } from '../../common/interfaces';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 
 @UseGuards(JwtGuard)
-@Controller('image')
+@Controller('images')
 export class ImageController {
   constructor(private imageService: ImageService) {}
 
@@ -16,5 +17,41 @@ export class ImageController {
   public async generateImage(@GetUser('id') userId: number, @Body() dto: GenerateImageDto): Promise<Response> {
     const data = await this.imageService.generateImage(userId, dto);
     return { data };
+  }
+
+  @Get()
+  public async get(@GetUser('id') userId: number, @Query() { page, limit }: BaseQueryDto): Promise<Response> {
+    page = Number(page) || 1;
+    limit = Number(limit) || 10;
+    const offset = limit * (page - 1);
+
+    const { 0: data, 1: count } = await this.imageService.get(userId, { limit, offset });
+
+    return {
+      pagination: { page, limit, count },
+      data,
+    };
+  }
+
+  @Get('/:id')
+  public async getById(@GetUser('id') userId: number, @Param() { id }: BaseParamDto): Promise<Response> {
+    const data = await this.imageService.getById(userId, id);
+    return { data };
+  }
+
+  @Put('/:id')
+  public async update(
+    @GetUser('id') userId: number,
+    @Param() { id }: BaseParamDto,
+    @Body() dto: UpdateImageDto
+  ): Promise<Response> {
+    const data = await this.imageService.update(userId, id, dto);
+    return { data };
+  }
+
+  @Delete('/:id')
+  public async delete(@GetUser('id') userId: number, @Param() { id }: BaseParamDto): Promise<Response> {
+    await this.imageService.delete(userId, id);
+    return { message: 'ok' };
   }
 }
