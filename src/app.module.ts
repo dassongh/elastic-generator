@@ -3,11 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { Audio } from './modules/audio/audio.entity';
+import { Chat } from './modules/chat/chat.entity';
+import { Message } from './modules/chat/message/message.entity';
 import { Image } from './modules/image/image.entity';
 import { User } from './modules/user/user.entity';
 
 import { AudioModule } from './modules/audio/audio.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ChatModule } from './modules/chat/chat.module';
 import { FileStorageModule } from './modules/file-storage/file-storage.module';
 import { ImageModule } from './modules/image/image.module';
 import { OpenAIModule } from './modules/openai/openai.module';
@@ -26,7 +29,7 @@ import { UserModule } from './modules/user/user.module';
         username: config.get<string>('POSTGRES_USER'),
         password: config.get<string>('POSTGRES_PASSWORD'),
         database: config.get<string>('POSTGRES_DB'),
-        entities: [User, Audio, Image],
+        entities: [User, Audio, Image, Chat, Message],
         synchronize: true,
       }),
     }),
@@ -36,6 +39,7 @@ import { UserModule } from './modules/user/user.module';
     AudioModule,
     FileStorageModule,
     ImageModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [],
