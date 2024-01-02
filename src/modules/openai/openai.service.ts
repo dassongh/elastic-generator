@@ -31,4 +31,17 @@ export class OpenAIService {
 
     return Buffer.from(image.data[0].b64_json, 'base64');
   }
+
+  public async generateText(
+    apiKey: string,
+    chatMessages: OpenAI.Chat.ChatCompletionMessageParam[],
+    userMessage: OpenAI.Chat.ChatCompletionUserMessageParam
+  ): Promise<OpenAI.Chat.ChatCompletion> {
+    const openAi = new OpenAI({ apiKey });
+
+    return openAi.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [...chatMessages, userMessage],
+    });
+  }
 }

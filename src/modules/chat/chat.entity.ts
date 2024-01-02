@@ -6,9 +6,9 @@ export abstract class Chat {
   @PrimaryColumn()
   id: number;
 
-  @Column()
+  @Column({ default: 'You are a helpful assistant' })
   modelRole: string;
 
-  @OneToMany(() => Message, message => message.chat)
+  @OneToMany(() => Message, message => message.chat, { cascade: ['insert'] })
   messages: Message[];
 }
