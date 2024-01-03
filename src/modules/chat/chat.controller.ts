@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 
 import { Chat } from './chat.entity';
 import { ChatService } from './chat.service';
-import { GenerateChatDto } from './dto';
+import { GenerateChatDto, GenerateMessageDto } from './dto';
 
-import { BaseQueryDto } from '../../common/dto';
+import { BaseParamDto, BaseQueryDto } from '../../common/dto';
 import { Response } from '../../common/interfaces';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
@@ -19,6 +19,11 @@ export class ChatController {
     return this.chatService.generateChat(userId, dto);
   }
 
+  @Post('/:id/generate-message')
+  async generateMessage(@GetUser('id') userId: number, @Param() { id }: BaseParamDto, @Body() dto: GenerateMessageDto) {
+    return this.chatService.generateMessage(userId, id, dto);
+  }
+
   @Get()
   public async get(@GetUser('id') userId: number, @Query() { page, limit }: BaseQueryDto): Promise<Response> {
     page = Number(page) || 1;
@@ -31,5 +36,17 @@ export class ChatController {
       pagination: { page, limit, count },
       data,
     };
+  }
+
+  @Get('/:id')
+  public async getById(@GetUser('id') userId: number, @Param() { id }: BaseParamDto): Promise<Response> {
+    const data = await this.chatService.getById(userId, id);
+    return { data };
+  }
+
+  @Delete('/:id')
+  public async delete(@GetUser('id') userId: number, @Param() { id }: BaseParamDto) {
+    await this.chatService.delete(userId, id);
+    return { message: 'ok' };
   }
 }

@@ -7,6 +7,9 @@ export abstract class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  chatId: number;
+
   @Column({ type: 'enum', enum: Role })
   role: Role;
 

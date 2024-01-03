@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+import { MessageRepository } from './message.repository';
+
+@Module({
+  providers: [MessageRepository],
+  exports: [MessageRepository],
+})
 export class MessageModule {}
