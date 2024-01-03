@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Chat } from '../chat.entity';
 import { Role } from './message.constants';
 
 @Entity()
 export abstract class Message {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'enum', enum: Role })

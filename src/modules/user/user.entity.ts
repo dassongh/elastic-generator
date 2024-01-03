@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Audio } from '../audio/audio.entity';
+import { Chat } from '../chat/chat.entity';
 import { Image } from '../image/image.entity';
 
 @Entity()
@@ -21,6 +22,9 @@ export abstract class User {
 
   @OneToMany(() => Image, image => image.user)
   images: Image[];
+
+  @OneToMany(() => Chat, chat => chat.user)
+  chats: Chat[];
 
   @Column({ nullable: true })
   openAiKey: string;

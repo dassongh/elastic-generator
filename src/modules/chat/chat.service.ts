@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { DEFAULT_MODEL_ROLE_MESSAGE } from './chat.constants';
 import { Chat } from './chat.entity';
 import { GenerateChatDto } from './dto';
 
@@ -19,12 +20,14 @@ export class ChatService {
   ) {}
 
   public async generateChat(userId: number, dto: GenerateChatDto): Promise<Chat> {
+    const modelRole = dto.modelRole || DEFAULT_MODEL_ROLE_MESSAGE;
     const chatPayload = {
-      modelRole: dto.modelRole,
+      userId,
+      modelRole: modelRole,
       messages: [
         {
           role: Role.SYSTEM,
-          content: dto.modelRole,
+          content: modelRole,
         },
       ],
     };

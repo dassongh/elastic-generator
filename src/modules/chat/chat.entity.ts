@@ -1,14 +1,21 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '../user/user.entity';
 import { Message } from './message/message.entity';
 
 @Entity()
 export abstract class Chat {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: 'You are a helpful assistant' })
+  @Column()
+  userId: number;
+
+  @Column()
   modelRole: string;
 
   @OneToMany(() => Message, message => message.chat, { cascade: ['insert'] })
   messages: Message[];
+
+  @ManyToOne(() => User, user => user.chats, { onDelete: 'CASCADE' })
+  user: User;
 }
