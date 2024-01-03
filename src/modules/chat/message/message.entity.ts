@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Chat } from '../chat.entity';
 import { Role } from './message.constants';
 
@@ -15,4 +15,7 @@ export abstract class Message {
 
   @ManyToOne(() => Chat, chat => chat.messages, { onDelete: 'CASCADE' })
   chat: Chat;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
