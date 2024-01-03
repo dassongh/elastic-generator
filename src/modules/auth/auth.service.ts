@@ -1,25 +1,22 @@
 import { pbkdf2 } from 'node:crypto';
 import { promisify } from 'node:util';
 
-import { Repository } from 'typeorm';
-
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { TokenType } from './auth.constants';
 import { TokenData, TokenPayload } from './auth.interfaces';
 import { SignInDto, SignUpDto } from './dto';
 
 import { GetUserViewDto } from '../user/dto';
-import { User } from '../user/user.entity';
+import { UserRepository } from '../user/user.repository';
 import { UserView } from '../user/user.view';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private userRepository: UserRepository,
     private userView: UserView,
     private jwtService: JwtService,
     private config: ConfigService

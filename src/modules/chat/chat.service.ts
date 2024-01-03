@@ -1,7 +1,4 @@
-import { Repository } from 'typeorm';
-
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { DEFAULT_MODEL_ROLE_MESSAGE } from './chat.constants';
 import { Chat } from './chat.entity';
@@ -9,14 +6,13 @@ import { GenerateChatDto, GetChatsDto } from './dto';
 
 import { Pagination } from '../../common/interfaces';
 import { OpenAIService } from '../openai/openai.service';
+import { ChatRepository } from './chat.repository';
 import { Role } from './message/message.constants';
-import { Message } from './message/message.entity';
 
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(Chat) private chatRepository: Repository<Chat>,
-    @InjectRepository(Message) private messageRepository: Repository<Message>,
+    private chatRepository: ChatRepository,
     private openAIService: OpenAIService
   ) {}
 
@@ -39,7 +35,8 @@ export class ChatService {
   public async get(userId: number, { limit, offset }: Pagination): Promise<[GetChatsDto[], number]> {
     const { 0: chats, 1: count } = await this.chatRepository.findAndCount({
       where: { userId },
-      select: ['id', 'modelRole'],
+      select: ['id', 'modelRole', 'messages'],
+      relations: { messages: {} },
       skip: offset,
       take: limit,
     });

@@ -41,7 +41,5 @@ import { UserModule } from './modules/user/user.module';
     ImageModule,
     ChatModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

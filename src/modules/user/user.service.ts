@@ -1,16 +1,15 @@
-import { Repository, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { GetUserViewDto } from './dto';
-import { User } from './user.entity';
+import { UserRepository } from './user.repository';
 import { UserView } from './user.view';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private userRepository: UserRepository,
     private userView: UserView
   ) {}
 

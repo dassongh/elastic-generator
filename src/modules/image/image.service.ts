@@ -1,23 +1,23 @@
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { GetImageDto, UpdateImageDto } from './dto';
+import { GenerateImageDto } from './dto/generate-image.dto';
+import { ROOT_IMAGES_DIR } from './image.constants';
 import { Image } from './image.entity';
 
 import { Pagination } from '../../common/interfaces';
 import { FileStorageService } from '../file-storage/file-storage.service';
 import { OpenAIService } from '../openai/openai.service';
-import { User } from '../user/user.entity';
-import { GenerateImageDto } from './dto/generate-image.dto';
-import { ROOT_IMAGES_DIR } from './image.constants';
+import { UserRepository } from '../user/user.repository';
+import { ImageRepository } from './image.repository';
 
 @Injectable()
 export class ImageService {
   constructor(
-    @InjectRepository(Image) private imageRepository: Repository<Image>,
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private imageRepository: ImageRepository,
+    private userRepository: UserRepository,
     private fileStorageService: FileStorageService,
     private openAIService: OpenAIService
   ) {}

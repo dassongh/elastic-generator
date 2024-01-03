@@ -1,22 +1,22 @@
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { ROOT_AUDIO_DIR } from './audio.constants';
 import { Audio } from './audio.entity';
+import { AudioRepository } from './audio.repository';
 import { GenerateAudioDto, GetAudioDto, UpdateAudioDto } from './dto';
 
 import { Pagination } from '../../common/interfaces';
 import { FileStorageService } from '../file-storage/file-storage.service';
 import { OpenAIService } from '../openai/openai.service';
-import { User } from '../user/user.entity';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class AudioService {
   constructor(
-    @InjectRepository(Audio) private audioRepository: Repository<Audio>,
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private audioRepository: AudioRepository,
+    private userRepository: UserRepository,
     private fileStorageService: FileStorageService,
     private openAIService: OpenAIService
   ) {}
