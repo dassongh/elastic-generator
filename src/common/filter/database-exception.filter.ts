@@ -1,5 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { Response } from 'express';
+import { FastifyReply } from 'fastify';
 import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
 
 @Catch(TypeORMError)
@@ -10,10 +10,10 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
 
   public catch(exception: QueryFailedError | EntityNotFoundError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
+    const response = ctx.getResponse<FastifyReply>();
 
     if (exception instanceof EntityNotFoundError) {
-      return response.status(404).json(this.getResponse('Entity not found', 'Not Found', 404));
+      return response.code(404).send(this.getResponse('Entity not found', 'Not Found', 404));
     }
     console.error(exception);
     const code = exception.driverError.code;
@@ -35,7 +35,7 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const exceptionEntity = exceptionEntityOptions[code] || exceptionEntityOptions.default;
     if (exceptionEntity.statusCode === 500) console.error(exception.message);
 
-    response.status(exceptionEntity.statusCode).json(exceptionEntity);
+    response.code(exceptionEntity.statusCode).send(exceptionEntity);
   }
 
   private getResponse(message: string, error: string, statusCode: number) {
