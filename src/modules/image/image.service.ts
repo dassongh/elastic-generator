@@ -7,7 +7,7 @@ import { GenerateImageDto } from './dto/generate-image.dto';
 import { ROOT_IMAGES_DIR } from './image.constants';
 import { Image } from './image.entity';
 
-import { Pagination } from '../../common/interfaces';
+import { PaginatedResponse, Pagination } from '../../common/interfaces';
 import { FileStorageService } from '../file-storage/file-storage.service';
 import { OpenAIService } from '../openai/openai.service';
 import { UserRepository } from '../user/user.repository';
@@ -44,7 +44,7 @@ export class ImageService {
     return image;
   }
 
-  public async get(userId: number, { limit, offset }: Pagination): Promise<[GetImageDto[], number]> {
+  public async get(userId: number, { limit, offset }: Pagination): Promise<PaginatedResponse<GetImageDto[]>> {
     const { 0: images, 1: count } = await this.imageRepository.findAndCount({
       where: { userId },
       select: ['id', 'title'],
@@ -52,7 +52,7 @@ export class ImageService {
       take: limit,
     });
 
-    return [images, count];
+    return { data: images, count };
   }
 
   public async getById(userId: number, imageId: number): Promise<Image> {

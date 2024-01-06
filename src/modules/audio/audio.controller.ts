@@ -37,7 +37,7 @@ export class AudioController {
     limit = Number(limit) || 10;
     const offset = limit * (page - 1);
 
-    const { 0: data, 1: count } = await this.audioService.get(userId, { limit, offset });
+    const { data, count } = await this.audioService.get(userId, { limit, offset });
 
     return {
       pagination: { page, limit, count },

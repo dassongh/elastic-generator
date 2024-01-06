@@ -7,7 +7,7 @@ import { Audio } from './audio.entity';
 import { AudioRepository } from './audio.repository';
 import { GenerateAudioDto, GetAudioDto, UpdateAudioDto } from './dto';
 
-import { Pagination } from '../../common/interfaces';
+import { PaginatedResponse, Pagination } from '../../common/interfaces';
 import { FileStorageService } from '../file-storage/file-storage.service';
 import { OpenAIService } from '../openai/openai.service';
 import { UserRepository } from '../user/user.repository';
@@ -45,7 +45,7 @@ export class AudioService {
     return audioEntity;
   }
 
-  public async get(userId: number, { limit, offset }: Pagination): Promise<[GetAudioDto[], number]> {
+  public async get(userId: number, { limit, offset }: Pagination): Promise<PaginatedResponse<GetAudioDto[]>> {
     const { 0: audios, 1: count } = await this.audioRepository.findAndCount({
       where: { userId },
       select: ['id', 'title'],
@@ -53,7 +53,7 @@ export class AudioService {
       take: limit,
     });
 
-    return [audios, count];
+    return { data: audios, count };
   }
 
   public async getById(userId: number, audioId: number): Promise<Audio> {

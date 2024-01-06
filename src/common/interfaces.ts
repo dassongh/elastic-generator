@@ -13,3 +13,8 @@ export interface Pagination {
   limit: number;
   offset: number;
 }
+
+export interface PaginatedResponse<T> {
+  data: T;
+  count: number;
+}

@@ -30,7 +30,7 @@ export class ChatController {
     limit = Number(limit) || 10;
     const offset = limit * (page - 1);
 
-    const { 0: data, 1: count } = await this.chatService.get(userId, { limit, offset });
+    const { data, count } = await this.chatService.get(userId, { limit, offset });
 
     return {
       pagination: { page, limit, count },
