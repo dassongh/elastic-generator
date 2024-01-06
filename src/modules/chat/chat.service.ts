@@ -5,7 +5,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DEFAULT_MODEL_ROLE_MESSAGE } from './chat.constants';
 import { Chat } from './chat.entity';
 import { ChatRepository } from './chat.repository';
-import { GenerateChatDto, GenerateMessageDto } from './dto';
+import { GenerateChatDto, GenerateMessageDto, GetChatsDto } from './dto';
 
 import { Role } from './message/message.constants';
 import { MessageRepository } from './message/message.repository';
@@ -74,9 +74,25 @@ export class ChatService {
     return response;
   }
 
-  public async get(userId: number, pagination: Pagination): Promise<[any[], number]> {
-    const { 0: chats, 1: count } = await this.chatRepository.getChats(userId, pagination);
-    return [chats, count];
+  public async get(userId: number, pagination: Pagination): Promise<[GetChatsDto[], number]> {
+    const { 0: chats, 1: count } = await Promise.all([
+      this.chatRepository.getChats(userId, pagination),
+      this.chatRepository.count({ where: { userId } }),
+    ]);
+
+    const chatsView = chats.map(chat => ({
+      id: chat.id,
+      modelRole: chat.modelRole,
+      createdAt: chat.chatCreatedAt,
+      lastMessage: {
+        id: chat.messageId,
+        content: chat.content,
+        role: chat.role,
+        createdAt: chat.messageCreatedAt,
+      },
+    }));
+
+    return [chatsView, count];
   }
 
   public getById(userId: number, chatId: number): Promise<Chat> {
